@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Keno & Mine with Extras</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1 class="game-title">KENOO</h1>
+  </header>
+
+  <!-- Agregamos una sección simple para establecer el userId -->
+  <div style="text-align:center;margin:20px;">
+    <input type="text" id="userIdInput" placeholder="Ingresa tu userId (por ahora tu TON address)">
+    <button id="setUserBtn">Establecer UserId</button>
+    <p style="color:#C7A3FF;" id="currentUser">Usuario no establecido</p>
+  </div>
+
+  <div class="top-section">
+    <div class="balance-wrapper">
+      <span class="balance-label">Balance</span>
+      <div class="balance-container">
+        <img src="img/token.png" alt="Gem" class="gem-icon">
+        <span class="balance-amount">0.000000</span>
+      </div>
+    </div>
+
+    <div class="wallet-wrapper">
+      <span class="wallet-label">Wallet</span>
+      <div class="wallet-row-simple">
+        <img src="img/wallet.png" alt="Wallet Icon" class="wallet-icon">
+        <span class="wallet-address">15K6E9w...</span>
+        <img src="img/avatar.png" alt="Profile Avatar" class="avatar-img-no-circle">
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla Mine -->
+  <div class="screen-mine" style="display:block;">
+    <div class="mine-container">
+      <div class="level-container">
+        <div class="level-label">LEVEL 1</div>
+        <div class="per-tap-label">PER TAP +1</div>
+      </div>
+
+      <div class="token-display">0</div>
+
+      <!-- Zona grande para el tap -->
+      <div class="gem-zone">
+        <div class="gem"></div>
+      </div>
+
+      <div class="powers-container" style="display:none;">
+        <div class="power-item boost-power" style="display:none;">
+          <img src="img/boost.png" alt="Boost" class="power-icon">
+          <span class="power-text">BOOST 2X</span>
+          <span class="power-timer boost-timer-text">5m 00s</span>
+        </div>
+
+        <div class="power-item triple-boost-power" style="display:none;">
+          <img src="img/boost.png" alt="Triple Boost" class="power-icon">
+          <span class="power-text">BOOST 3X</span>
+          <span class="power-timer triple-boost-timer-text">5m 00s</span>
+        </div>
+
+        <div class="power-item tap-power" style="display:none;">
+          <img src="img/tap.png" alt="Auto Tap" class="power-icon">
+          <span class="power-text">AUTO TAP</span>
+          <span class="power-timer tap-timer-text">3m 00s</span>
+        </div>
+      </div>
+
+      <!-- Botones para probar funcionalidad -->
+      <div style="margin-top:20px;text-align:center;">
+        <button class="aux-btn" id="mineBtn">Minar Gema</button>
+        <button class="aux-btn" id="balanceBtn">Ver Balance</button>
+      </div>
+
+      <div style="margin-top:20px;text-align:center;">
+        <input type="number" id="convertAmountInput" placeholder="Cantidad a convertir" min="1" style="width:150px;">
+        <button class="aux-btn convert-btn" id="convertBtn" style="margin-top:20px;">Convert</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla Keno -->
+  <div class="screen-keno" style="display:none;">
+    <p class="selection-hint">Select 1-10 numbers to play</p>
+    <div class="payout-table" style="display:none;"></div>
+    <div class="numbers-grid">
+      <!-- 40 casillas -->
+      <button class="number-btn" data-number="1">1</button><button class="number-btn" data-number="2">2</button>... <!-- Casillas restantes -->
+      <!-- Deja esto igual, el Keno se implementará luego -->
+    </div>
+    <div class="bet-section">
+      <button class="bet-btn">Bet</button>
+      <div class="aux-buttons">
+        <button class="aux-btn auto-pick-btn">Auto Pick</button>
+        <button class="aux-btn clear-btn">Clear</button>
+      </div>
+      <div class="bet-amount-box">
+        <img src="img/token.png" alt="Gem" class="gem-icon-small">
+        <span class="bet-label">Bet Amount</span>
+        <input type="number" class="bet-input" value="100" min="1" />
+        <div class="bet-controls">
+          <button class="purple-btn half-btn">1/2</button>
+          <button class="purple-btn double-btn">2x</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla Store -->
+  <div class="screen-store" style="display:none;">
+    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+  </div>
+
+  <!-- Pantalla Tasks -->
+  <div class="screen-tasks" style="display:none;">
+    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+  </div>
+
+  <!-- Pantalla Achievements -->
+  <div class="screen-achievements" style="display:none;">
+    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+  </div>
+
+  <!-- Pantalla Leaderboard -->
+  <div class="screen-leaderboard" style="display:none;">
+    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+  </div>
+
+  <!-- Pantalla Profile -->
+  <div class="screen-profile" style="display:none;">
+    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+  </div>
+
+  <div class="bottom-nav-container">
+    <nav class="bottom-nav">
+      <div class="nav-item mine-tab active">
+        <img src="img/mina.png" alt="Mine" class="nav-icon">
+        <span class="nav-text">Mine</span>
+      </div>
+      <div class="nav-item store-tab">
+        <img src="img/store.png" alt="Store" class="nav-icon">
+        <span class="nav-text">Store</span>
+      </div>
+      <div class="nav-item keno-tab">
+        <div class="keno-button">
+          <img src="img/token.png" alt="Keno" class="keno-icon">
+        </div>
+        <span class="nav-text">Keno</span>
+      </div>
+      <div class="nav-item tasks-tab">
+        <img src="img/tasks.png" alt="Tasks" class="nav-icon">
+        <span class="nav-text">Tasks</span>
+      </div>
+      <div class="nav-item profile-tab">
+        <img src="img/profile.png" alt="Profile" class="nav-icon">
+        <span class="nav-text">Profile</span>
+      </div>
+    </nav>
+  </div>
+
+</div>
+
+<div class="toast-notification" style="display:none;"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

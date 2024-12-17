@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Keno & Mine with Extras</title>
 <link rel="stylesheet" href="styles.css">
+
+<!-- TonConnect Scripts -->
+<script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.umd.js"></script>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.umd.js"></script>
+
 </head>
 <body>
 
@@ -13,12 +18,12 @@
     <h1 class="game-title">KENOO</h1>
   </header>
 
-  <!-- Agregamos una sección simple para establecer el userId -->
+  <!-- Nueva sección TonConnect -->
   <div style="text-align:center;margin:20px;">
-    <input type="text" id="userIdInput" placeholder="Ingresa tu userId (por ahora tu TON address)">
-    <button id="setUserBtn">Establecer UserId</button>
-    <p style="color:#C7A3FF;" id="currentUser">Usuario no establecido</p>
+    <div id="ton-connect-button"></div>
+    <p style="color:#C7A3FF;" id="currentUserStatus">Usuario no conectado</p>
   </div>
+  <!-- Fin nueva sección TonConnect -->
 
   <div class="top-section">
     <div class="balance-wrapper">
@@ -74,7 +79,7 @@
         </div>
       </div>
 
-      <!-- Botones para probar funcionalidad -->
+      <!-- Botones para funcionalidad -->
       <div style="margin-top:20px;text-align:center;">
         <button class="aux-btn" id="mineBtn">Minar Gema</button>
         <button class="aux-btn" id="balanceBtn">Ver Balance</button>
@@ -93,8 +98,9 @@
     <div class="payout-table" style="display:none;"></div>
     <div class="numbers-grid">
       <!-- 40 casillas -->
-      <button class="number-btn" data-number="1">1</button><button class="number-btn" data-number="2">2</button>... <!-- Casillas restantes -->
-      <!-- Deja esto igual, el Keno se implementará luego -->
+      <button class="number-btn" data-number="1">1</button><button class="number-btn" data-number="2">2</button>
+      <!-- ...continúa con las casillas 3 a 40 como antes -->
+      <!-- Deja esto igual, Keno se implementa luego -->
     </div>
     <div class="bet-section">
       <button class="bet-btn">Bet</button>
@@ -116,27 +122,32 @@
 
   <!-- Pantalla Store -->
   <div class="screen-store" style="display:none;">
-    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+    <h2 style="text-align:center;margin-bottom:20px;">Store</h2>
+    <!-- Contenido original sin cambios -->
   </div>
 
   <!-- Pantalla Tasks -->
   <div class="screen-tasks" style="display:none;">
-    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+    <h2 style="text-align:center;margin-bottom:20px;">Tasks & Daily Missions</h2>
+    <!-- Contenido original sin cambios -->
   </div>
 
   <!-- Pantalla Achievements -->
   <div class="screen-achievements" style="display:none;">
-    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+    <h2 style="text-align:center;margin-bottom:20px;">Achievements</h2>
+    <!-- Contenido original sin cambios -->
   </div>
 
   <!-- Pantalla Leaderboard -->
   <div class="screen-leaderboard" style="display:none;">
-    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+    <h2 style="text-align:center;margin-bottom:20px;">Leaderboard</h2>
+    <!-- Contenido original sin cambios -->
   </div>
 
   <!-- Pantalla Profile -->
   <div class="screen-profile" style="display:none;">
-    <!-- Deja esta pantalla igual, no la modificamos ahora -->
+    <h2 style="text-align:center;margin-bottom:20px;">Profile & Exchange</h2>
+    <!-- Contenido original sin cambios -->
   </div>
 
   <div class="bottom-nav-container">

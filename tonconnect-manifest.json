@@ -1,0 +1,7 @@
+{
+    "url": "https://www.gemasino.com",
+    "name": "Gemasino",
+    "iconUrl": "https://www.gemasino.com/img/icon.png",
+    "fields": ["ton_address", "ton_public_key"]
+  }
+  

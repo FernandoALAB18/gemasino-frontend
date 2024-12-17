@@ -1,7 +1,71 @@
 const backendUrl = "https://gemasino-backend.onrender.com"; 
-let currentUserId = ""; // Debes establecerlo en el index.html cuando el usuario ingrese su ID.
+let currentUserId = ""; 
+let publicKeyHex = "";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Integración TonConnect
+  const { TonConnect } = window.tonconnect;
+  const { TonConnectUI } = window["tonconnect-ui"];
+
+  const currentUserStatus = document.getElementById('currentUserStatus');
+  const walletAddressEl = document.querySelector('.wallet-address');
+  const avatarImgEl = document.querySelector('.avatar-img-no-circle');
+
+  const tonConnect = new TonConnect({
+    manifestUrl: 'https://www.gemasino.com/tonconnect-manifest.json'
+  });
+  const tonConnectUI = new TonConnectUI(tonConnect, {
+    buttonRootId: 'ton-connect-button'
+  });
+
+  tonConnect.onStatusChange(async (walletInfo) => {
+    if (walletInfo.account) {
+      const tonAddress = walletInfo.account.address;
+      publicKeyHex = walletInfo.account.publicKey; 
+
+      // Pedimos challenge al backend
+      const challengeRes = await fetch(`${backendUrl}/api/request-challenge`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ tonAddress })
+      });
+      const challengeData = await challengeRes.json();
+      const challenge = challengeData.challenge;
+
+      // Firmar challenge con TonConnect
+      const messageBytes = new TextEncoder().encode(challenge);
+      const signature = await tonConnect.signData(messageBytes);
+
+      // Verificar firma en backend
+      const verifyRes = await fetch(`${backendUrl}/api/verify-signature`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ tonAddress, publicKey: publicKeyHex, signature: signature.signature })
+      });
+      const verifyData = await verifyRes.json();
+      if (verifyData.success) {
+        currentUserId = tonAddress;
+        currentUserStatus.textContent = "Usuario conectado: " + tonAddress;
+        walletAddressEl.textContent = tonAddress;
+        avatarImgEl.src = 'img/avatar.png';
+        showToast("Wallet conectada y usuario autenticado.");
+        getBalanceFromBackend(); 
+      } else {
+        showToast("No se pudo autenticar la wallet.");
+      }
+
+    } else {
+      // Desconectado
+      currentUserId = "";
+      currentUserStatus.textContent = "Usuario no conectado";
+      walletAddressEl.textContent = "15K6E9w...";
+      avatarImgEl.src = 'img/avatar.png';
+    }
+  });
+
+  // A partir de aquí, tu código original del script tal como lo proporcionaste,
+  // con las funciones ya adaptadas al backend para minar y convertir gemas.
+
   const balanceAmountEl = document.querySelector('.balance-amount');
 
   function getLocalBalance() {
@@ -28,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Función para minar (equivalente a doTap) llamando al backend
+  // Función para minar llamando al backend
   async function mine() {
     if (!currentUserId) {
       showToast("Primero establece un userId");
@@ -43,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (data.success) {
       showToast("Has minado una gema!");
       getBalanceFromBackend();
-      // Actualiza XP y level localmente
       tapsToday++;
       gainXP(1);
     } else {
@@ -63,10 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Por ahora convertiremos un valor fijo, o puedes pedirlo al usuario.
-    // Si quieres usar un input, agrega un campo en HTML y toma el valor de allí.
-    // Aquí, por seguir el código original, tomamos el 10% local, 
-    // pero ahora vamos a llamar al endpoint real /convert-internal-to-gem.
     let amount = Math.floor(balance * 0.1);
     if (amount < 1) {
       showToast("No tienes suficientes gemas internas para convertir el 10%");
@@ -82,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (data.success) {
       showToast(`Convertiste ${amount} gemas internas a GEM! txHash:${data.txHash}`);
       getBalanceFromBackend();
-      mineTokens = 0; // Reset local ya no es necesario, pero mantenemos consistencia.
+      mineTokens = 0; 
       updateMineUI();
     } else {
       showToast('Error en la conversión:' + (data.error || 'Desconocido'));
@@ -212,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateMineUI() {
     levelLabel.textContent = `LEVEL ${level}`;
     perTapLabel.textContent = `PER TAP +${getCurrentPerTap()}`;
-    // tokenDisplay.textContent se actualiza en getBalanceFromBackend
     updateHalo();
   }
 
@@ -228,19 +286,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMineUI();
   }
 
-  // Reemplazar el convertBtn local logic con el endpoint real:
-  convertBtn.removeEventListener('click', ()=>{}); 
-  convertBtn.addEventListener('click', convertInternalToGem);
-
   function updateBoostCostText() {
     boostCostText.textContent = `x2 Boost (5 min) - ${boostCost} Gems`;
     tripleBoostCostText.textContent = `x3 Boost (5 min) - ${tripleBoostCost} Gems`;
   }
 
   updateBoostCostText();
-
-  // buyBoostTokensBtn, buyTripleBoostBtn, etc. mantienen lógica local, no conectadas a backend.
-  // Podrías eliminar o mantener según necesites.
 
   function checkAchievementsAndMissions() {
     if (tapsToday>=1000) {
@@ -264,8 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     balance-= toConvert;
     setLocalBalance(balance);
-    let tonReceived = toConvert*GEM_TO_TON;
-    showToast(`Convertiste ${toConvert} gems a ${tonReceived.toFixed(6)} TON`);
+    let tonReceived = (toConvert * GEM_TO_TON).toFixed(6);
+    showToast(`Convertiste ${toConvert} gems a ${tonReceived} TON`);
   });
 
   convertUsdtBtn.addEventListener('click', () => {
@@ -281,8 +332,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     balance-= toConvert;
     setLocalBalance(balance);
-    let usdtReceived = toConvert*GEM_TO_USDT;
-    showToast(`Convertiste ${toConvert} gems a ${usdtReceived.toFixed(2)} USDT`);
+    let usdtReceived = (toConvert * GEM_TO_USDT).toFixed(2);
+    showToast(`Convertiste ${toConvert} gems a ${usdtReceived} USDT`);
   });
 
   function showMine() {
@@ -431,6 +482,11 @@ document.addEventListener('DOMContentLoaded', () => {
   backToTasksBtn.addEventListener('click', showTasks);
   backToTasksBtn2.addEventListener('click', showTasks);
 
+  async function claimExternalTask(taskName) {
+    // Placeholder: sin implementar backend real para tasks.
+    return {success:false};
+  }
+
   claimShuffleBtn.addEventListener('click', async () => {
     shuffleStatus.style.display = 'block';
     shuffleStatus.textContent = 'Verificando...';
@@ -458,11 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
       stakeStatus.textContent = 'No se ha verificado la tarea aún. Intenta más tarde.';
     }
   });
-
-  async function claimExternalTask(taskName) {
-    // Placeholder: sin implementar backend real para tasks.
-    return {success:false};
-  }
 
   function toggleSelection(btn) {
     const selectedCount = document.querySelectorAll('.number-btn.selected').length;
@@ -506,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   betBtn.addEventListener('click', () => {
-    // Lógica local para Keno sin cambios. Puedes integrar al backend si quieres.
     let balance = getLocalBalance();
     let bet = parseInt(betInput.value, 10);
     if (isNaN(bet) || bet < 1) {
@@ -571,8 +621,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Inicial
   showMine();
   updateMineUI();
-  // Podrías llamar getBalanceFromBackend() después de que se establezca currentUserId en el HTML
 });

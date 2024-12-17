@@ -10,16 +10,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const currentUserStatus = document.getElementById('currentUserStatus');
   const walletAddressEl = document.querySelector('.wallet-address');
   const avatarImgEl = document.querySelector('.avatar-img-no-circle');
-  const connectWalletBtn = document.getElementById('connectWalletBtn'); // Asegúrate de que este botón existe en el HTML
+  const connectWalletBtn = document.getElementById('connectWalletBtn'); // Debe existir en el HTML
 
   const tonConnect = new TonConnect({
     manifestUrl: 'https://www.gemasino.com/tonconnect-manifest.json'
   });
+  
+  // Si no quieres el botón por defecto de TonConnectUI, no pases buttonRootId
   const tonConnectUI = new TonConnectUI(tonConnect);
-
-  // Al hacer clic en el botón, abrimos el modal de TonConnect
+  
+  // En lugar de openModal(), usamos showWalletList()
   connectWalletBtn.addEventListener('click', () => {
-    tonConnectUI.openModal();
+    tonConnectUI.showWalletList();
   });
 
   tonConnect.onStatusChange(async (walletInfo) => {
@@ -67,7 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Código original adaptado al backend
+  // El resto del código permanece igual, sin eliminar nada.
+
   const balanceAmountEl = document.querySelector('.balance-amount');
 
   function getLocalBalance() {

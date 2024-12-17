@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Impedir zoom en la pantalla -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>Keno & Mine with Extras</title>
 <link rel="stylesheet" href="styles.css">
 
@@ -18,8 +19,10 @@
     <h1 class="game-title">KENOO</h1>
   </header>
 
-  <!-- Sección TonConnect -->
+  <!-- Sección TonConnect (elimina el input de userId) -->
   <div style="text-align:center;margin:20px;">
+    <!-- Agregamos el botón "Connect your Wallet" sin eliminar nada -->
+    <button class="aux-btn" id="connectWalletBtn" style="margin-bottom:10px;">Connect your Wallet</button>
     <div id="ton-connect-button"></div>
     <p style="color:#C7A3FF;" id="currentUserStatus">Usuario no conectado</p>
   </div>

@@ -11,11 +11,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const walletAddressEl = document.querySelector('.wallet-address');
   const avatarImgEl = document.querySelector('.avatar-img-no-circle');
 
+  // Insertamos la línea para el botón Connect your Wallet sin eliminar nada
+  const connectWalletBtn = document.getElementById('connectWalletBtn');
+
   const tonConnect = new TonConnect({
     manifestUrl: 'https://www.gemasino.com/tonconnect-manifest.json'
   });
   const tonConnectUI = new TonConnectUI(tonConnect, {
     buttonRootId: 'ton-connect-button'
+  });
+
+  // Insertamos el listener para el botón "Connect your Wallet" sin eliminar nada
+  connectWalletBtn.addEventListener('click', () => {
+    tonConnectUI.openModal();
   });
 
   tonConnect.onStatusChange(async (walletInfo) => {

@@ -63,9 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // A partir de aquí, tu código original del script tal como lo proporcionaste,
-  // con las funciones ya adaptadas al backend para minar y convertir gemas.
-
+  // Código original adaptado al backend
   const balanceAmountEl = document.querySelector('.balance-amount');
 
   function getLocalBalance() {
@@ -76,10 +74,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     balanceAmountEl.textContent = value.toFixed(6);
   }
 
-  // Función para obtener el balance desde el backend
   async function getBalanceFromBackend() {
     if (!currentUserId) {
-      showToast("Primero establece un userId");
+      showToast("Primero conecta tu wallet TON");
       return;
     }
     const res = await fetch(`${backendUrl}/api/get-balance?userId=${encodeURIComponent(currentUserId)}`);
@@ -92,10 +89,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Función para minar llamando al backend
   async function mine() {
     if (!currentUserId) {
-      showToast("Primero establece un userId");
+      showToast("Primero conecta tu wallet TON");
       return;
     }
     const res = await fetch(`${backendUrl}/api/mine`, {
@@ -114,10 +110,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Función para convertir gemas internas a GEM on-chain
   async function convertInternalToGem() {
     if (!currentUserId) {
-      showToast("Primero establece un userId");
+      showToast("Primero conecta tu wallet TON");
       return;
     }
     let balance = getLocalBalance();
@@ -141,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (data.success) {
       showToast(`Convertiste ${amount} gemas internas a GEM! txHash:${data.txHash}`);
       getBalanceFromBackend();
-      mineTokens = 0; 
+      mineTokens = 0;
       updateMineUI();
     } else {
       showToast('Error en la conversión:' + (data.error || 'Desconocido'));

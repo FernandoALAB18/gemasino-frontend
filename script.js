@@ -1,13 +1,9 @@
-const backendUrl = "https://gemasino-backend.onrender.com"; 
-let currentUserId = ""; 
-let publicKeyHex = "";
-
-document.addEventListener('DOMContentLoaded', async () => {
-  // Integración TonConnect con UMD
-  const tonConnect = new window.TonConnect({
+document.addEventListener('DOMContentLoaded', () => {
+  // Usamos tonConnectSdk y tonConnectUI desde window
+  const tonConnect = new window.tonConnectSdk.TonConnect({
     manifestUrl: 'https://www.gemasino.com/tonconnect-manifest.json'
   });
-  const tonConnectUI = new window.TonConnectUI(tonConnect);
+  const tonConnectUI = new window.tonConnectUI.TonConnectUI(tonConnect);
 
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const statusText = document.getElementById('statusText');
@@ -40,34 +36,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   tonConnect.onStatusChange(async (walletInfo) => {
     if (walletInfo.account) {
       const tonAddress = walletInfo.account.address;
-      publicKeyHex = walletInfo.account.publicKey; 
+      // Aquí podrías pedir el balance a tu backend, por ahora fijo 100.000000
+      let userBalance = 100.000000; 
 
-      // Llamamos al backend para obtener el balance (placeholder)
-      const res = await fetch(`${backendUrl}/api/get-balance?userId=${encodeURIComponent(tonAddress)}`);
-      const data = await res.json();
-      let userBalance = 0.0;
-      if (data.internalGems !== undefined) {
-        userBalance = data.internalGems;
-      }
-
-      currentUserId = tonAddress;
       statusText.textContent = "Wallet conectada: " + tonAddress;
       walletAddressEl.textContent = tonAddress;
       balanceAmountEl.textContent = userBalance.toFixed(6);
       
-      // Mostramos la pantalla de info
       connectScreen.style.display = 'none';
       walletInfoScreen.style.display = 'block';
 
       showToast("Wallet conectada y balance cargado.");
     } else {
       // Desconectado
-      currentUserId = "";
       statusText.textContent = "Usuario no conectado.";
       walletAddressEl.textContent = "N/A";
       balanceAmountEl.textContent = "0.000000";
-
-      // Volvemos a la pantalla inicial
       walletInfoScreen.style.display = 'none';
       connectScreen.style.display = 'block';
     }
